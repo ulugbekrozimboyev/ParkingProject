@@ -1,29 +1,43 @@
 package uz.epam.parking.helpers;
 
+import lombok.RequiredArgsConstructor;
+import uz.epam.parking.ParkIsFullyEmptyException;
 import uz.epam.parking.exceptions.ParkIsFullException;
 import uz.epam.parking.model.ParkModel;
+import uz.epam.parking.model.Spot;
 
+import java.util.Optional;
+
+@RequiredArgsConstructor
 public final class ParkingHelper {
 
-    public static Integer addCars(ParkModel parkModel, Integer joinCarCount) throws ParkIsFullException {
+    public static Spot addCars(ParkModel parkModel) throws ParkIsFullException {
         synchronized(parkModel) {
-            if (parkModel.getLimit() > parkModel.getCurrentCarsCount() + joinCarCount) {
-                parkModel.setCurrentCarsCount(parkModel.getCurrentCarsCount() + joinCarCount);
-                return parkModel.getCurrentCarsCount();
-            } else {
-                throw new ParkIsFullException();
-            }
+
+            Optional<Spot> spotOptional = parkModel.getAvailableSpots()
+                    .stream()
+                    .filter(s -> s.getIsFree())
+                    .findFirst();
+
+            if(!spotOptional.isPresent()) throw new ParkIsFullException();
+
+            spotOptional.get().setIsFree(false);
+            return spotOptional.get();
         }
     }
 
-    public static Integer leaveCars(ParkModel parkModel, Integer leaveCarCount) {
+    public static Spot leaveCars(ParkModel parkModel) throws ParkIsFullyEmptyException {
         synchronized (parkModel) {
-            if (parkModel.getCurrentCarsCount() < leaveCarCount) {
-                parkModel.setCurrentCarsCount(0);
-            } else {
-                parkModel.setCurrentCarsCount(parkModel.getCurrentCarsCount() - leaveCarCount);
-            }
-            return parkModel.getCurrentCarsCount();
+
+            Optional<Spot> spotOptional = parkModel.getAvailableSpots()
+                    .stream()
+                    .filter(s -> !s.getIsFree())
+                    .findFirst();
+
+            if(!spotOptional.isPresent()) throw new ParkIsFullyEmptyException();
+
+            spotOptional.get().setIsFree(true);
+            return spotOptional.get();
         }
     }
 

@@ -8,20 +8,20 @@ public class CarParkingRunnable implements Runnable {
 
     @Override
     public void run() {
-        boolean carWasAdded = false;
-        do {
-            try {
-                int carSpot = ParkingHelper.addCars(ParkModel.getPark(), 1);
-                System.out.printf("Car parking spot number: %d \n", carSpot);
-                carWasAdded = true;
-            } catch (ParkIsFullException e) {
-                try {
-                    Thread.sleep(1000);
-                    System.out.println(e.getMessage());
-                } catch (InterruptedException interruptedException) {
-                    interruptedException.printStackTrace();
-                }
-            }
-        } while (!carWasAdded);
+//        boolean carWasAdded = false;
+//        do {
+//            try {
+//                int carSpot = ParkingHelper.addCars(ParkModel.getPark(4, 10), 1);
+//                System.out.printf("Car parking spot number: %d \n", carSpot);
+//                carWasAdded = true;
+//            } catch (ParkIsFullException e) {
+//                try {
+//                    Thread.sleep(1000);
+//                    System.out.println(e.getMessage());
+//                } catch (InterruptedException interruptedException) {
+//                    interruptedException.printStackTrace();
+//                }
+//            }
+//        } while (!carWasAdded);
     }
 }
